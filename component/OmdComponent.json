@@ -42,7 +42,7 @@
             "description": "Expresses what the implementation of the omd_component is",
             "type": "string",
             "enum": [
-              "microservice", "platform", "library", "sdk", "front-end", "infra", "client-app", "dashboard"
+              "microservice", "platform", "library", "sdk", "front-end", "infra", "client-app", "dashboard", "microservice-serverless"
             ]
           },
           "omd_compliance": {
