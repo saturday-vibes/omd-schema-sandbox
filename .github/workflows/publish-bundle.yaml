@@ -6,9 +6,14 @@ on:
       NPM_TOKEN:
         required: true
   workflow_dispatch:
+    inputs:
+      tag:
+        description: Existing bundle release tag to publish, e.g. bundle-v1.1.0
+        required: true
+        type: string
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   publish:
@@ -18,6 +23,25 @@ jobs:
         with:
           fetch-depth: 0
           fetch-tags: true
+      - name: Resolve the bundle tag
+        id: tag
+        env:
+          INPUT_TAG: ${{ inputs.tag }}
+        run: |
+          TAG=${INPUT_TAG:-bundle-v$(jq -r .version bundle/package.json)}
+          git rev-parse -q --verify "refs/tags/$TAG" >/dev/null || {
+            echo "::error::tag $TAG does not exist"
+            exit 1
+          }
+          git checkout -q "$TAG"
+          VERSION=$(jq -r .version bundle/package.json)
+          if [ "bundle-v$VERSION" != "$TAG" ]; then
+            echo "::error::$TAG has bundle/package.json version $VERSION"
+            exit 1
+          fi
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "Publishing $TAG"
       - name: Get node version
         id: nvm
         run: echo "NODE_VERSION=$(cat .nvmrc)" >> "$GITHUB_OUTPUT"
@@ -25,47 +49,18 @@ jobs:
         with:
           node-version: ${{ steps.nvm.outputs.NODE_VERSION }}
           registry-url: https://registry.npmjs.org
-      - name: Next package version
-        id: version
-        run: |
-          NAME=$(jq -r .name bundle/package.json)
-          CURRENT=$(npm view "$NAME" version 2>/dev/null || true)
-          if [ -z "$CURRENT" ]; then
-            NEXT=1.0.0
-          else
-            IFS=. read -r MAJOR MINOR _ <<<"$CURRENT"
-            NEXT="$MAJOR.$((MINOR + 1)).0"
-          fi
-          echo "name=$NAME" >> "$GITHUB_OUTPUT"
-          echo "current=$CURRENT" >> "$GITHUB_OUTPUT"
-          echo "next=$NEXT" >> "$GITHUB_OUTPUT"
-          echo "Published: ${CURRENT:-none}, next: $NEXT"
       - name: Build bundle from tags
-        run: scripts/build-bundle.sh dist "${{ steps.version.outputs.next }}"
-      - name: Skip if the schemas did not change
-        id: changed
-        env:
-          NAME: ${{ steps.version.outputs.name }}
-          CURRENT: ${{ steps.version.outputs.current }}
-        run: |
-          if [ -z "$CURRENT" ]; then
-            echo "changed=true" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
-          mkdir -p /tmp/published
-          npm pack "$NAME@$CURRENT" --pack-destination /tmp/published >/dev/null
-          tar -xzf /tmp/published/*.tgz -C /tmp/published
-          if diff -r /tmp/published/package/schemas dist/schemas >/dev/null; then
-            echo "::notice::$NAME@$CURRENT already has these schemas, nothing to publish"
-            echo "changed=false" >> "$GITHUB_OUTPUT"
-          else
-            echo "changed=true" >> "$GITHUB_OUTPUT"
-          fi
+        run: scripts/build-bundle.sh dist "${{ steps.tag.outputs.version }}"
       - name: Publish to npm
-        if: steps.changed.outputs.changed == 'true'
         working-directory: dist
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           npm pack --dry-run
           npm publish --access public
+      - name: Attach the bundle to the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          (cd dist && npm pack --pack-destination ..)
+          gh release upload "${{ steps.tag.outputs.tag }}" ./*.tgz --clobber

@@ -1,6 +1,6 @@
 {
   "name": "@test-org-th/omd-schema",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "Every released OMD schema version, built from the component-v* and service-v* tags",
   "repository": {
     "type": "git",

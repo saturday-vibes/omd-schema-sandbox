@@ -2,6 +2,8 @@
 # Builds the npm package that holds every released schema version.
 # main only has the latest schema of each kind, so older versions are read
 # from their release tags: component-v1.4.4 -> schemas/v1.4.4/OmdComponent.json
+# Only tags contained in HEAD are used, so a bundle tag always rebuilds the
+# same package.
 #
 # Usage: scripts/build-bundle.sh <out-dir> <package-version>
 set -euo pipefail
@@ -20,7 +22,7 @@ for kind in component service; do
   esac
 
   entries='[]'
-  for tag in $(git tag -l "$kind-v*" --sort=-v:refname); do
+  for tag in $(git tag -l "$kind-v*" --merged HEAD --sort=-v:refname); do
     v=${tag#"$kind-"}
     mkdir -p "$out/schemas/$v"
     git show "$tag:$kind/$file" >"$out/schemas/$v/$file"
