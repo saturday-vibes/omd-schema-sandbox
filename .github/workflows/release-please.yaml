@@ -1,0 +1,55 @@
+name: release-please
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    outputs:
+      paths_released: ${{ steps.release.outputs.paths_released }}
+    steps:
+      - id: release
+        uses: googleapis/release-please-action@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json
+
+  attach-schemas:
+    needs: release-please
+    if: needs.release-please.outputs.paths_released != '[]' && needs.release-please.outputs.paths_released != ''
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+      - name: Attach the schema to each new release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PATHS_RELEASED: ${{ needs.release-please.outputs.paths_released }}
+        run: |
+          for kind in $(jq -r '.[]' <<<"$PATHS_RELEASED"); do
+            tag="$kind-v$(cat "$kind/version.txt")"
+            gh release upload "$tag" "$kind"/Omd*.json --clobber
+            echo "Attached $kind/Omd*.json to $tag"
+          done
+
+  # Tags created with GITHUB_TOKEN do not trigger other workflows, so the
+  # bundle is published from here.
+  publish-bundle:
+    needs:
+      - release-please
+      - attach-schemas
+    permissions:
+      contents: read
+    uses: ./.github/workflows/publish-bundle.yaml
+    secrets:
+      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
