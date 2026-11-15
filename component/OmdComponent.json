@@ -10,8 +10,12 @@
     "inventory_id"
   ],
   "properties": {
-    "omd_service": { "type": "string" },
-    "schema_version": { "type": "string" },
+    "omd_service": {
+      "type": "string"
+    },
+    "schema_version": {
+      "type": "string"
+    },
     "inventory_id": {
       "type": "string",
       "const": "980162270ee0cf69c2e3a0a0a87dd93d-e8e885e0931c2c609d3059f840c02b70"
@@ -35,7 +39,8 @@
         "name": {
           "title": "Component",
           "type": "string",
-          "pattern": "^[a-z][a-z0-9_-]{0,61}[a-z0-9]$"
+          "pattern": "^[a-z][a-z0-9_-]{0,61}[a-z0-9]$",
+          "errorMessage": "Component name should be starting with a lowercase letter, should not exceed 63 characters in length and can contain lowercase letters, numbers, underscores, and hyphens."
         },
         "description": {
           "title": "Component description",
@@ -68,13 +73,19 @@
           "title": "Cell",
           "description": "Describes runtime relationships between microservices. For the time being, omd_cell should match omd_service",
           "type": "string",
-          "pattern": "^[a-z][a-z0-9_-]{0,61}[a-z0-9]$"
+          "pattern": "^[a-z][a-z0-9_-]{0,61}[a-z0-9]$",
+          "errorMessage": "omd_cell should be starting with a lowercase letter, should not exceed 63 characters in length and can contain lowercase letters, numbers, underscores, and hyphens."
         },
         "subdivision_strategy": {
           "title": "Subdivision Strategy",
           "description": "A temporary tag in now.yaml describing the runtime deployment configuration of an OMD component that defines the mechanism for supporting multiple products across many regions. At deployment-time, this strategy is used to perform releases to specific subdivisions.",
           "type": "string",
-          "enum": ["global", "market", "tenant", "tenant-market"]
+          "enum": [
+            "global",
+            "market",
+            "tenant",
+            "tenant-market"
+          ]
         },
         "supported_markets": {
           "title": "Supported Logical Markets",
@@ -82,26 +93,44 @@
           "type": "array",
           "items": {
             "type": "string",
-            "enum": ["amer", "apac", "emea", "latam"]
+            "enum": [
+              "amer",
+              "apac",
+              "emea",
+              "latam"
+            ]
           }
         },
         "deployment_strategy": {
           "title": "Deployment Strategy",
           "description": "This tag helps to describe the deployment of compute resources and infrastructure",
           "type": "string",
-          "enum": ["single", "primary", "all"]
+          "enum": [
+            "single",
+            "primary",
+            "all"
+          ]
         },
         "database_type": {
           "title": "Database Type",
           "description": "This tag helps to describe the type of the database",
           "type": "string",
-          "enum": ["aurora-pg", "dynamodb", "elasticache", "mongodb"]
+          "enum": [
+            "aurora-pg",
+            "dynamodb",
+            "elasticache",
+            "mongodb"
+          ]
         },
         "replication_strategy": {
           "title": "Replication Strategy",
           "description": "This tag helps to describe the type of the database replication strategy",
           "type": "string",
-          "enum": ["global", "market", "none"]
+          "enum": [
+            "global",
+            "market",
+            "none"
+          ]
         },
         "sdm_owner_email": {
           "title": "SDM Owner Email",
@@ -134,7 +163,10 @@
           "items": {
             "type": "object",
             "additionalProperties": false,
-            "required": ["omd_service", "omd_component"],
+            "required": [
+              "omd_service",
+              "omd_component"
+            ],
             "properties": {
               "omd_service": {
                 "title": "Service Name",
@@ -173,16 +205,47 @@
           "if": {
             "properties": {
               "type": {
-                "enum": ["infra", "database"]
-                }
+                "enum": [
+                  "infra",
+                  "database"
+                ]
+              }
             }
           },
           "then": {
-            "required": ["paths"],
+            "required": [
+              "paths"
+            ],
+            "errorMessage": {
+              "required": {
+                "paths": "The paths configuration is required for infra and database components"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "enum": [
+                  "infra",
+                  "database"
+                ]
+              }
+            }
+          },
+          "then": {
             "properties": {
               "paths": {
                 "type": "object",
-                "required": ["src"]
+                "required": [
+                  "src"
+                ],
+                "errorMessage": {
+                  "required": {
+                    "src": "The paths.src field is required for infra and database components"
+                  }
+                }
               }
             }
           }
@@ -191,32 +254,65 @@
           "if": {
             "properties": {
               "type": {
-                "enum": ["infra", "microservice", "database"]
+                "enum": [
+                  "infra",
+                  "microservice",
+                  "database"
+                ]
               }
             }
           },
           "then": {
-            "required": ["subdivision_strategy", "deployment_strategy"]
+            "required": [
+              "subdivision_strategy",
+              "deployment_strategy"
+            ],
+            "errorMessage": {
+              "required": {
+                "subdivision_strategy": "Subdivision strategy is required for infra, microservice, and database type components",
+                "deployment_strategy": "Deployment strategy is required for infra, microservice, and database type components"
+              }
+            }
           }
         },
         {
           "if": {
             "properties": {
               "type": {
-                "enum": ["database"]
+                "enum": [
+                  "database"
+                ]
               }
             }
           },
           "then": {
-            "required": ["database_type", "replication_strategy"]
+            "required": [
+              "database_type",
+              "replication_strategy"
+            ],
+            "errorMessage": {
+              "required": {
+                "database_type": "Database Type is required for  database type components",
+                "replication_strategy": "Replication Strategy is required for database type components"
+              }
+            }
           },
           "else": {
             "not": {
               "anyOf": [
-                { "required": ["database_type"] },
-                { "required": ["replication_strategy"] }
+                {
+                  "required": [
+                    "database_type"
+                  ]
+                },
+                {
+                  "required": [
+                    "replication_strategy"
+                  ]
+                }
               ]
-            }
+            },
+            "errorMessage": "Database-specific fields (database_type, replication_strategy) should not be present for non-database type components"
           }
         }
       ]
@@ -226,7 +322,10 @@
       "description": "The JIRA project acronym and URL associated with the Jira board representing where work is tracked for the corresponding omd_component",
       "type": "object",
       "additionalProperties": false,
-      "required": ["name", "jira_board"],
+      "required": [
+        "name",
+        "jira_board"
+      ],
       "properties": {
         "name": {
           "title": "Name",
