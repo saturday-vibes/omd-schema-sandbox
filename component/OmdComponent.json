@@ -64,7 +64,8 @@
             "database",
             "static-site",
             "microservice-ai-agent",
-            "serverless-ai-agent"
+            "serverless-ai-agent",
+            "edge-function"
           ]
         },
         "omd_compliance": {
