@@ -1,130 +1,187 @@
 {
-    "$schema": "http://json-schema.org/draft-07/schema",
-    "title": "OMD Schema - Component",
-    "type": "object",
-    "required": [
-      "omd_service",
-      "omd_component",
-      "omd_jira_project",
-      "omd_schema_version",
-      "inventory_id"
-    ],
-    "properties": {
-      "omd_service": { "type": "string" },
-      "omd_schema_version": { "type": "string" },
-      "inventory_id": { "type": "string", "const": "980162270ee0cf69c2e3a0a0a87dd93d-e8e885e0931c2c609d3059f840c02b70" },
-      "omd_component": {
-        "title": "Component",
-        "description": "Name of an individual microservice, shared library, or other platform element (e.g. lambda, batch job, etc).  The value must be unique across the ecosystem.",
-        "type": "object",
-        "additionalProperties": false,
-        "required": [
-          "name",
-          "description",
-          "omd_type",
-          "omd_compliance",
-          "omd_cell",
-          "subdivision_strategy",
-          "omd_sdm_owner_email",
-          "omd_team",
-          "omd_tier"
-        ],
-        "properties": {
-          "name": {
-            "title": "Component",
-            "type": "string"
-          },
-          "description": {
-            "title": "Component description",
-            "type": "string"
-          },
-          "omd_type": {
-            "title": "Type",
-            "description": "Expresses what the implementation of the omd_component is",
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "title": "OMD Schema - Component",
+  "type": "object",
+  "required": [
+    "omd_service",
+    "omd_component",
+    "omd_jira_project",
+    "omd_schema_version",
+    "inventory_id"
+  ],
+  "properties": {
+    "omd_service": {"type": "string"},
+    "omd_schema_version": {"type": "string"},
+    "inventory_id": {
+      "type": "string",
+      "const": "980162270ee0cf69c2e3a0a0a87dd93d-e8e885e0931c2c609d3059f840c02b70"
+    },
+    "omd_component": {
+      "title": "Component",
+      "description": "Name of an individual microservice, shared library, or other platform element (e.g. lambda, batch job, etc).  The value must be unique across the ecosystem.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "description",
+        "omd_type",
+        "omd_compliance",
+        "omd_cell",
+        "omd_sdm_owner_email",
+        "omd_team",
+        "omd_tier"
+      ],
+      "properties": {
+        "name": {
+          "title": "Component",
+          "type": "string"
+        },
+        "description": {
+          "title": "Component description",
+          "type": "string"
+        },
+        "omd_type": {
+          "title": "Type",
+          "description": "Expresses what the implementation of the omd_component is",
+          "type": "string",
+          "enum": [
+            "microservice",
+            "platform",
+            "library",
+            "sdk",
+            "front-end",
+            "infra",
+            "client-app",
+            "dashboard",
+            "microservice-serverless",
+            "infra-library"
+          ]
+        },
+        "omd_compliance": {
+          "title": "Compliance",
+          "description": "Metadata associated with the omd_component which identifies if the service and its underlying components are directly associated with regulatory/compliance concerns.",
+          "type": "string"
+        },
+        "omd_cell": {
+          "title": "Cell",
+          "description": "Describes runtime relationships between microservices. For the time being, omd_cell should match omd_service",
+          "type": "string"
+        },
+        "subdivision_strategy": {
+          "title": "Subdivision Strategy",
+          "description": "A temporary tag in now.yaml describing the runtime deployment configuration of an OMD component that defines the mechanism for supporting multiple products across many regions. At deployment-time, this strategy is used to perform releases to specific subdivisions.",
+          "type": "string",
+          "enum": ["global", "market", "tenant", "tenant-market"]
+        },
+        "supported_markets": {
+          "title": "Supported Logical Markets",
+          "description": "An optional tag to indicate which logical markets the component is applicable.",
+          "type": "array",
+          "items": {
             "type": "string",
-            "enum": [
-              "microservice", "platform", "library", "sdk", "front-end", "infra", "client-app", "dashboard", "microservice-serverless"
-            ]
-          },
-          "omd_compliance": {
-            "title": "Compliance",
-            "description": "Metadata associated with the omd_component which identifies if the service and its underlying components are directly associated with regulatory/compliance concerns.",
-            "type": "string"
-          },
-          "omd_cell": {
-            "title": "Cell",
-            "description": "Describes runtime relationships between microservices. For the time being, omd_cell should match omd_service",
-            "type": "string"
-          },
-          "subdivision_strategy": {
-            "title": "Subdivision Strategy",
-            "description": "A temporary tag in now.yaml describing the runtime deployment configuration of an OMD component that defines the mechanism for supporting multiple products across many regions. At deployment-time, this strategy is used to perform releases to specific subdivisions.",
-            "type": "string",
-            "enum": [
-              "global", "market", "tenant", "tenant-market"
-            ]
-          },
-          "omd_sdm_owner_email": {
-            "title": "SDM Owner Email",
-            "description": "The e-mail address of the WBD SDM/Director that owns the omd_component",
-            "type": "string"
-          },
-          "omd_team" : {
-            "title": "OMD Team",
-            "description": "The JIRA team name, who owns this component",
-            "type": "string"
-          },
-          "omd_tier": {
-            "title": "Tier",
-            "description": "Helps to identify the criticality of a component that can suggest operational support needed for each component/service, metrics to collect, SLAs, SLOs, etc",
-            "type": "string",
-            "enum": [
-              "undefined", "not-applicable", "tier-1", "tier-2", "tier-3", "tier-4"
-            ]
-          },
-          "omd_paths" : {
-            "title": "OMD Paths",
-            "description": "The paths, where you can find specific part(s) of the component.",
+            "enum": ["amer", "apac", "emea", "latam"]
+          }
+        },
+        "deployment_strategy": {
+          "title": "Deployment Strategy",
+          "description": "This tag helps to describe the deployment of compute resources and infrastructure",
+          "type": "string",
+          "enum": ["single", "primary", "all"]
+        },
+        "omd_sdm_owner_email": {
+          "title": "SDM Owner Email",
+          "description": "The e-mail address of the WBD SDM/Director that owns the omd_component",
+          "type": "string"
+        },
+        "omd_team": {
+          "title": "OMD Team",
+          "description": "The JIRA team name, who owns this component",
+          "type": "string"
+        },
+        "omd_tier": {
+          "title": "Tier",
+          "description": "Helps to identify the criticality of a component that can suggest operational support needed for each component/service, metrics to collect, SLAs, SLOs, etc",
+          "type": "string",
+          "enum": [
+            "undefined",
+            "not-applicable",
+            "tier-1",
+            "tier-2",
+            "tier-3",
+            "tier-4"
+          ]
+        },
+        "dependencies": {
+          "title": "Component Dependencies",
+          "description": "A tag used for linking dependencies between different components with any OMD type",
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
             "type": "object",
             "additionalProperties": false,
+            "required": ["omd_service", "omd_component"],
             "properties": {
-              "src" : {
-                "title": "Source code",
-                "type": "array"
+              "omd_service": {
+                "title": "Service Name",
+                "type": "string"
               },
-              "infra" : {
-                "title": "IAC code",
-                "type": "array"
-              },
-              "docs" : {
-                "title": "Documentation",
-                "type": "array"
+              "omd_component": {
+                "title": "Component Name",
+                "type": "string"
               }
+            }
+          }
+        },
+        "omd_paths": {
+          "title": "OMD Paths",
+          "description": "The paths, where you can find specific part(s) of the component.",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "src": {
+              "title": "Source code",
+              "type": "array"
+            },
+            "infra": {
+              "title": "IAC code",
+              "type": "array"
+            },
+            "docs": {
+              "title": "Documentation",
+              "type": "array"
             }
           }
         }
       },
-      "omd_jira_project": {
-        "title": "Jira Project",
-        "description": "The JIRA project acronym and URL associated with the Jira board representing where work is tracked for the corresponding omd_component",
-        "type": "object",
-        "additionalProperties": false,
-        "required": [
-          "name",
-          "jira_board"
-        ],
+      "if": {
         "properties": {
-          "name": {
-            "title": "Name",
-            "description": "JIRA project acronym associated with the Jira board representing where work is tracked for the corresponding omd_component",
-            "type": "string"
-          },
-          "jira_board": {
-            "title": "Jira board URL",
-            "description": "URL associated with the Jira board representing where work is tracked for the corresponding omd_component",
-            "type": "string"
+          "omd_type": {
+            "enum": ["infra", "microservice"]
           }
+        }
+      },
+      "then": {
+        "required": ["subdivision_strategy", "deployment_strategy"]
+      }
+    },
+    "omd_jira_project": {
+      "title": "Jira Project",
+      "description": "The JIRA project acronym and URL associated with the Jira board representing where work is tracked for the corresponding omd_component",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "jira_board"],
+      "properties": {
+        "name": {
+          "title": "Name",
+          "description": "JIRA project acronym associated with the Jira board representing where work is tracked for the corresponding omd_component",
+          "type": "string"
+        },
+        "jira_board": {
+          "title": "Jira board URL",
+          "description": "URL associated with the Jira board representing where work is tracked for the corresponding omd_component",
+          "type": "string"
         }
       }
     }
   }
+}
