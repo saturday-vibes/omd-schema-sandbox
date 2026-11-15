@@ -60,7 +60,7 @@
             "description": "A temporary tag in now.yaml describing the runtime deployment configuration of an OMD component that defines the mechanism for supporting multiple products across many regions. At deployment-time, this strategy is used to perform releases to specific subdivisions.",
             "type": "string",
             "enum": [
-              "product", "product-market", "global", "global-market"
+              "global", "market", "tenant", "tenant-market"
             ]
           },
           "omd_sdm_owner_email": {
