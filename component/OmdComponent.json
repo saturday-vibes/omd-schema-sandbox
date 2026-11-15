@@ -26,7 +26,8 @@
           "omd_cell",
           "subdivision_strategy",
           "omd_sdm_owner_email",
-          "omd_team"
+          "omd_team",
+          "omd_tier"
         ],
         "properties": {
           "name": {
@@ -72,6 +73,14 @@
             "title": "OMD Team",
             "description": "The JIRA team name, who owns this component",
             "type": "string"
+          },
+          "omd_tier": {
+            "title": "Tier",
+            "description": "Helps to identify the criticality of a component that can suggest operational support needed for each component/service, metrics to collect, SLAs, SLOs, etc",
+            "type": "string",
+            "enum": [
+              "undefined", "not-applicable", "tier-1", "tier-2", "tier-3", "tier-4"
+            ]
           },
           "omd_paths" : {
             "title": "OMD Paths",
