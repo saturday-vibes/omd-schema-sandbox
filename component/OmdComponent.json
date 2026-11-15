@@ -62,7 +62,9 @@
             "serverless",
             "infra-library",
             "database",
-            "static-site"
+            "static-site",
+            "microservice-ai-agent",
+            "serverless-ai-agent"
           ]
         },
         "omd_compliance": {
