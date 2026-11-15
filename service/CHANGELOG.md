@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.2.1
+
+Imported from action-validate-now-dot-yaml (schemas/v1.2.1/OmdService.json).
+
 ## 1.2.0
 
 Imported from action-validate-now-dot-yaml (schemas/v1.2.0/OmdService.json).
