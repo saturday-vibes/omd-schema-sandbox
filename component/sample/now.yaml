@@ -2,7 +2,7 @@ omd_service: <service_name> #same as service name at root level
 
 omd_component:
   name: <component name> # mandatory -  this is the name of an individual microservice, shared library, or other platform element
-  omd_type: <omd type> #must be - microservice, platform, library, sdk, front-end, infra, client-app
+  omd_type: <type> # must be - microservice, platform, library, sdk, front-end, infra, client-app, dashboard
   description: <description>
   omd_compliance: <compilance> #list of allowed values - gdpr, ccpa, sox, none
   omd_cell: <cell> #For the time being - omd_cell should match omd_service
@@ -19,9 +19,9 @@ omd_component:
       
 omd_jira_project:
   name: <Jira Project Name>
-  jira_board: <Link to Jira Board>
+  jira_board: <Link to Jira Project>
 
-omd_schema_version: v1.1.0
+omd_schema_version: v1.1.1
 
 # Used for tracking the repository in WBD inventory. Do not remove or alter the content.
 inventory_id: 980162270ee0cf69c2e3a0a0a87dd93d-e8e885e0931c2c609d3059f840c02b70
