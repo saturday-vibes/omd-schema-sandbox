@@ -6,15 +6,17 @@ omd_component:
   description: <description> # mandatory
   omd_compliance: <compilance> # mandatory - list of allowed values - gdpr, ccpa, sox, none
   omd_cell: <cell> # mandatory - for the time being - omd_cell should match omd_service
-  subdivision_strategy: <subdivision strategy> # mandatory if omd_type is infra or microservice with allowed values - global, market, tenant, tenant-market
+  subdivision_strategy: <subdivision strategy> # mandatory if omd_type is infra or microservice or database with allowed values - global, market, tenant, tenant-market
   supported_markets: #optional - list of allowed values - amer, apac, emea, latam
     - market1
     - market2
-  deployment_strategy: <deployment strategy> # mandatory if omd_type is infra or microservice with allowed values - single, primary, all
+  deployment_strategy: <deployment strategy> # mandatory if omd_type is infra or microservice or database with allowed values - single, primary, all
+  database_type: <database type> # mandatory if omd_type is database with allowed values - aurora-pg, dynamodb, elasticache, mongodb (not allowed if omd_type is not database)
+  replication_strategy: <replication strategy> # mandatory if omd_type is database with allowed values - none, market, global (not allowed if omd_type is not database)
   sdm_owner_email: <email of WBD SDM/Director that owns the omd_component> # mandatory
   jira_team: <JIRA team name> # mandatory - the name of the team used in JIRA
   omd_tier: <tier> # mandatory - list of allowed values - undefined, not-applicable, tier-1, tier-2, tier-3, tier-4
-  paths: # mandatory -  if omd_type is infra, paths.src is mandatory
+  paths: # mandatory -  if omd_type is infra or database, paths.src is mandatory
     src:
       - component/src
     infra:
@@ -31,7 +33,7 @@ jira_project:
   name: <Jira Project Name> # mandatory
   jira_board: <Link to Jira Board> # mandatory
 
-schema_version: v1.3.2 # mandatory
+schema_version: v1.4.0 # mandatory
 
 # Used for tracking the repository in WBD inventory. Do not remove or alter the content.
 inventory_id: 980162270ee0cf69c2e3a0a0a87dd93d-e8e885e0931c2c609d3059f840c02b70

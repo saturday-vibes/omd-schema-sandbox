@@ -55,7 +55,8 @@
             "client-app",
             "dashboard",
             "serverless",
-            "infra-library"
+            "infra-library",
+            "database"
           ]
         },
         "omd_compliance": {
@@ -89,6 +90,18 @@
           "description": "This tag helps to describe the deployment of compute resources and infrastructure",
           "type": "string",
           "enum": ["single", "primary", "all"]
+        },
+        "database_type": {
+          "title": "Database Type",
+          "description": "This tag helps to describe the type of the database",
+          "type": "string",
+          "enum": ["aurora-pg", "dynamodb", "elasticache", "mongodb"]
+        },
+        "replication_strategy": {
+          "title": "Replication Strategy",
+          "description": "This tag helps to describe the type of the database replication strategy",
+          "type": "string",
+          "enum": ["global", "market", "none"]
         },
         "sdm_owner_email": {
           "title": "SDM Owner Email",
@@ -160,7 +173,7 @@
           "if": {
             "properties": {
               "type": {
-                "enum": ["infra"]
+                "enum": ["infra", "database"]
                 }
             }
           },
@@ -178,12 +191,32 @@
           "if": {
             "properties": {
               "type": {
-                "enum": ["infra", "microservice"]
+                "enum": ["infra", "microservice", "database"]
               }
             }
           },
           "then": {
             "required": ["subdivision_strategy", "deployment_strategy"]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "enum": ["database"]
+              }
+            }
+          },
+          "then": {
+            "required": ["database_type", "replication_strategy"]
+          },
+          "else": {
+            "not": {
+              "anyOf": [
+                { "required": ["database_type"] },
+                { "required": ["replication_strategy"] }
+              ]
+            }
           }
         }
       ]
