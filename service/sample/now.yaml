@@ -5,6 +5,7 @@ omd_service:
   name: <service_name> #mandatory #(https://docs.google.com/spreadsheets/d/1hB40zJmN5Wu8U2Kly06MSzs8--6wlzcAIUnjgdqoOTk/edit#gid=1607734789) Worksheet: CAP - Services, Core Digital & Data - Services
   description: <description>
   origin: <owner>/<repo> #optional - example: wbd-streaming/service-catalog
+  slack_channel: <#channel> #optional - example: #wbd-omd-help
 
 schema_version: v1.2.1 # x-release-please-version
 
