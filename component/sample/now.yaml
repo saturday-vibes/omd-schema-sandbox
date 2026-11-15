@@ -2,7 +2,7 @@ omd_service: <service_name> # mandatory - same as service name at root level
 
 omd_component:
   name: <component name> # mandatory -  this is the name of an individual microservice, shared library, or other platform element
-  omd_type: <omd_type> # mandatory - must be - microservice, platform, library, sdk, front-end, infra, client-app, dashboard, microservice-serverless, infra-library
+  type: <omd_type> # mandatory - must be - microservice, platform, library, sdk, front-end, infra, client-app, dashboard, microservice-serverless, infra-library
   description: <description> # mandatory
   omd_compliance: <compilance> # mandatory - list of allowed values - gdpr, ccpa, sox, none
   omd_cell: <cell> # mandatory - for the time being - omd_cell should match omd_service
@@ -11,10 +11,10 @@ omd_component:
     - market1
     - market2
   deployment_strategy: <deployment strategy> # mandatory if omd_type is infra or microservice with allowed values - single, primary, all
-  omd_sdm_owner_email: <email of WBD SDM/Director that owns the omd_component> # mandatory
-  omd_team: <JIRA team name> # mandatory - the name of the team, same as it is in JIRA
+  sdm_owner_email: <email of WBD SDM/Director that owns the omd_component> # mandatory
+  jira_team: <JIRA team name> # mandatory - the name of the team used in JIRA
   omd_tier: <tier> # mandatory - list of allowed values - undefined, not-applicable, tier-1, tier-2, tier-3, tier-4
-  omd_paths: # optional, not needed to be set by all teams
+  paths: # optional, not needed to be set by all teams
     src:
       - component/src
     infra:
@@ -27,11 +27,11 @@ omd_component:
     - omd_service: <service2>
       omd_component: <component2>
 
-omd_jira_project:
+jira_project:
   name: <Jira Project Name> # mandatory
   jira_board: <Link to Jira Board> # mandatory
 
-omd_schema_version: v1.2.0 # mandatory
+schema_version: v1.3.0 # mandatory
 
 # Used for tracking the repository in WBD inventory. Do not remove or alter the content.
 inventory_id: 980162270ee0cf69c2e3a0a0a87dd93d-e8e885e0931c2c609d3059f840c02b70
