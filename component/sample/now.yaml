@@ -10,7 +10,7 @@ omd_component:
   supported_markets: #optional - list of allowed values - amer, apac, emea, latam
     - market1
     - market2
-  deployment_strategy: <deployment strategy> # mandatory if omd_type is infra or microservice or database with allowed values - single, primary, all
+  deployment_strategy: <deployment strategy> # mandatory if omd_type is infra or microservice or database with allowed values - single, primary, all, dual
   database_type: <database type> # mandatory if omd_type is database with allowed values - aurora-pg, dynamodb, elasticache, mongodb (not allowed if omd_type is not database)
   replication_strategy: <replication strategy> # mandatory if omd_type is database with allowed values - none, market, global (not allowed if omd_type is not database)
   sdm_owner_email: <email of WBD SDM/Director that owns the omd_component> # mandatory
@@ -33,7 +33,7 @@ jira_project:
   name: <Jira Project Name> # mandatory
   jira_board: <Link to Jira Board> # mandatory
 
-schema_version: v1.4.1 # mandatory
+schema_version: v1.4.3 # mandatory
 
 # Used for tracking the repository in WBD inventory. Do not remove or alter the content.
 inventory_id: 980162270ee0cf69c2e3a0a0a87dd93d-e8e885e0931c2c609d3059f840c02b70

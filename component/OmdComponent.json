@@ -104,12 +104,13 @@
         },
         "deployment_strategy": {
           "title": "Deployment Strategy",
-          "description": "This tag helps to describe the deployment of compute resources and infrastructure",
+          "description": "This tag helps to describe the deployment of compute resources and infrastructure.",
           "type": "string",
           "enum": [
             "single",
             "primary",
-            "all"
+            "all",
+            "dual"
           ]
         },
         "database_type": {
