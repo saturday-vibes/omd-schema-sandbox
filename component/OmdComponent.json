@@ -61,7 +61,8 @@
             "dashboard",
             "serverless",
             "infra-library",
-            "database"
+            "database",
+            "static-site"
           ]
         },
         "omd_compliance": {
