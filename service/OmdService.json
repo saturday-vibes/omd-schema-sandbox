@@ -1,0 +1,43 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "title": "OMD Schema - Repo Level",
+  "type": "object",
+  "required": [
+    "omd_business_service",
+    "omd_service",
+    "omd_schema_version",
+    "inventory_id"
+  ],
+  "properties": {
+    "omd_schema_version": { "type": "string" },
+    "inventory_id": { "type": "string", "const": "980162270ee0cf69c2e3a0a0a87dd93d-e8e885e0931c2c609d3059f840c02b70" },
+    "omd_business_service": {
+      "title": "Business Service",
+      "description": "Identifies the business owner of the components in the repository. Aligns to org chart and used primarily for auditing, accounting and reporting.",
+      "type": "object",
+      "required": [ "name" ],
+      "properties": {
+        "name": {
+          "title": "Business service name",
+          "type": "string"
+        }
+      }
+    },
+    "omd_service": {
+      "title": "Service",
+      "description": "A name for a group of related components which live together in source.",
+      "type": "object",
+      "required": [ "name", "description" ],
+      "properties": {
+        "name": {
+          "title": "Service name",
+          "type": "string"
+        },
+        "description": {
+          "title": "Service description",
+          "type": "string"
+        }
+      }
+    }
+  }
+}

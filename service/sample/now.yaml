@@ -1,0 +1,11 @@
+omd_business_service:
+  name: <business_service_name> #mandatory #list of allowed value - playback-and-manifests, ad-tech, content, live-streaming-services, video-quality-of-experience, media-supply-chain, common, product-and-design, consumer, commerce, content-discovery, data-platforms, ml-and-growth, dai-engg, boltpipeline, boltcloud, observability, global-quality-assurance, pacsec, beam-global-client-devices.
+
+omd_service:
+  name: <service_name> #mandatory #(https://docs.google.com/spreadsheets/d/1hB40zJmN5Wu8U2Kly06MSzs8--6wlzcAIUnjgdqoOTk/edit#gid=1607734789) Worksheet: CAP - Services, Core Digital & Data - Services
+  description: <description> 
+
+omd_schema_version: v1.0.0
+
+# Used for tracking the repository in WBD inventory. Do not remove or alter the content.
+inventory_id: 980162270ee0cf69c2e3a0a0a87dd93d-e8e885e0931c2c609d3059f840c02b70
