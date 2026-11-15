@@ -1,4 +1,4 @@
-# saturday-vibes-omd-schema
+# @test-org-th/omd-schema
 
 Every released OMD schema version in one package. Sandbox for
 [omd-schema](https://github.com/wbd-streaming/omd-schema).
@@ -14,8 +14,8 @@ schemas/
 Pick the schema from the `schema_version` in a `now.yaml`:
 
 ```js
-const index = require('saturday-vibes-omd-schema/schemas/index.json');
-const schema = require(`saturday-vibes-omd-schema/schemas/${version}/OmdComponent.json`);
+const index = require('@test-org-th/omd-schema/schemas/index.json');
+const schema = require(`@test-org-th/omd-schema/schemas/${version}/OmdComponent.json`);
 ```
 
 Each schema version is also a GitHub release (`component-v1.4.4`,

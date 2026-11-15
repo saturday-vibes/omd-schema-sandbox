@@ -19,7 +19,7 @@ service/sample/now.yaml
 1. Merging that PR tags `component-vx.y.z` and creates a GitHub release with
    only `OmdComponent.json` attached. The changelog links to the diff against
    the previous version.
-1. The same run rebuilds the npm package `saturday-vibes-omd-schema` from all
+1. The same run rebuilds the npm package `@test-org-th/omd-schema` from all
    tags and publishes it with the next minor version.
 
 Service works the same way with `service/` and `service-vx.y.z` tags.

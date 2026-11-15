@@ -1,11 +1,11 @@
 {
   "name": "cli-consumer",
   "private": true,
-  "description": "Loads schemas from saturday-vibes-omd-schema the way the CLI would",
+  "description": "Loads schemas from @test-org-th/omd-schema the way the CLI would",
   "dependencies": {
     "ajv": "^8.17.1",
     "ajv-errors": "^3.0.0",
     "js-yaml": "^4.1.0",
-    "saturday-vibes-omd-schema": "^1.0.0"
+    "@test-org-th/omd-schema": "^1.0.0"
   }
 }

@@ -4,7 +4,7 @@ const fs = require('node:fs');
 const Ajv = require('ajv');
 const ajvErrors = require('ajv-errors');
 const yaml = require('js-yaml');
-const index = require('saturday-vibes-omd-schema/schemas/index.json');
+const index = require('@test-org-th/omd-schema/schemas/index.json');
 
 const file = process.argv[2];
 const doc = yaml.load(fs.readFileSync(file, 'utf8'));
@@ -18,7 +18,7 @@ if (!known.includes(version)) {
   process.exit(2);
 }
 
-const schema = require(`saturday-vibes-omd-schema/schemas/${version}/${fileName}`);
+const schema = require(`@test-org-th/omd-schema/schemas/${version}/${fileName}`);
 const ajv = new Ajv({ allErrors: true, strict: false });
 ajvErrors(ajv);
 const validate = ajv.compile(schema);
