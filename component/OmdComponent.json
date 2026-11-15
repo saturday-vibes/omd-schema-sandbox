@@ -34,7 +34,8 @@
       "properties": {
         "name": {
           "title": "Component",
-          "type": "string"
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_-]{0,61}[a-z0-9]$"
         },
         "description": {
           "title": "Component description",
@@ -53,7 +54,6 @@
             "infra",
             "client-app",
             "dashboard",
-            "microservice-serverless",
             "serverless",
             "infra-library"
           ]
@@ -66,7 +66,8 @@
         "omd_cell": {
           "title": "Cell",
           "description": "Describes runtime relationships between microservices. For the time being, omd_cell should match omd_service",
-          "type": "string"
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_-]{0,61}[a-z0-9]$"
         },
         "subdivision_strategy": {
           "title": "Subdivision Strategy",
