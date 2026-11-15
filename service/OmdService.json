@@ -36,6 +36,10 @@
         "description": {
           "title": "Service description",
           "type": "string"
+        },
+        "origin": {
+          "title": "Component origin",
+          "type": "string"
         }
       }
     }
