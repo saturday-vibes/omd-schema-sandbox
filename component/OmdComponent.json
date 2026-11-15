@@ -10,15 +10,15 @@
     "inventory_id"
   ],
   "properties": {
-    "omd_service": {"type": "string"},
-    "schema_version": {"type": "string"},
+    "omd_service": { "type": "string" },
+    "schema_version": { "type": "string" },
     "inventory_id": {
       "type": "string",
       "const": "980162270ee0cf69c2e3a0a0a87dd93d-e8e885e0931c2c609d3059f840c02b70"
     },
     "omd_component": {
       "title": "Component",
-      "description": "Name of an individual microservice, shared library, or other platform element (e.g. lambda, batch job, etc).  The value must be unique across the ecosystem.",
+      "description": "Name of an individual microservice, shared library, or other platform element (e.g. lambda, batch job, etc). The value must be unique across the ecosystem.",
       "type": "object",
       "additionalProperties": false,
       "required": [
@@ -54,6 +54,7 @@
             "client-app",
             "dashboard",
             "microservice-serverless",
+            "serverless",
             "infra-library"
           ]
         },
@@ -153,16 +154,38 @@
           }
         }
       },
-      "if": {
-        "properties": {
-          "type": {
-            "enum": ["infra", "microservice"]
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "enum": ["infra"]
+                }
+            }
+          },
+          "then": {
+            "required": ["paths"],
+            "properties": {
+              "paths": {
+                "type": "object",
+                "required": ["src"]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "enum": ["infra", "microservice"]
+              }
+            }
+          },
+          "then": {
+            "required": ["subdivision_strategy", "deployment_strategy"]
           }
         }
-      },
-      "then": {
-        "required": ["subdivision_strategy", "deployment_strategy"]
-      }
+      ]
     },
     "jira_project": {
       "title": "Jira Project",
