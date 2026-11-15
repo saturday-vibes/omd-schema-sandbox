@@ -7,12 +7,14 @@
     "component": {
       "release-type": "simple",
       "component": "component",
-      "package-name": "component"
+      "package-name": "component",
+      "extra-files": ["sample/now.yaml"]
     },
     "service": {
       "release-type": "simple",
       "component": "service",
-      "package-name": "service"
+      "package-name": "service",
+      "extra-files": ["sample/now.yaml"]
     },
     ".": {
       "release-type": "simple",
