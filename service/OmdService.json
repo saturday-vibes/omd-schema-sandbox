@@ -41,6 +41,11 @@
         "origin": {
           "title": "Component origin",
           "type": "string"
+        },
+        "slack_channel": {
+          "title": "Slack channel",
+          "type": "string",
+          "pattern": "^#[a-z0-9_-]+$"
         }
       }
     }
