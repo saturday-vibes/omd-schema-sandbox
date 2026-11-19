@@ -1,0 +1,103 @@
+name: release
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - component/**
+      - service/**
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  pending:
+    runs-on: ubuntu-latest
+    outputs:
+      kinds: ${{ steps.pending.outputs.kinds }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+      - name: Get node version
+        id: nvm
+        run: echo "NODE_VERSION=$(cat .nvmrc)" >> "$GITHUB_OUTPUT"
+      - uses: actions/setup-node@v7
+        with:
+          node-version: ${{ steps.nvm.outputs.NODE_VERSION }}
+      - run: npm ci --ignore-scripts
+      - name: Kinds whose version has no tag yet
+        id: pending
+        run: |
+          kinds=$(node scripts/check-release.mjs pending)
+          echo "kinds=$kinds" >> "$GITHUB_OUTPUT"
+          echo "Pending: $kinds"
+
+  release:
+    needs: pending
+    if: needs.pending.outputs.kinds != '[]'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ fromJson(needs.pending.outputs.kinds) }}
+    steps:
+      - uses: actions/checkout@v7
+      - name: Get node version
+        id: nvm
+        run: echo "NODE_VERSION=$(cat .nvmrc)" >> "$GITHUB_OUTPUT"
+      - uses: actions/setup-node@v7
+        with:
+          node-version: ${{ steps.nvm.outputs.NODE_VERSION }}
+          registry-url: https://registry.npmjs.org
+      # Publish before tagging: a failed publish leaves no tag, so the next run retries it.
+      - name: Publish ${{ matrix.name }}@${{ matrix.version }}
+        working-directory: ${{ matrix.dir }}
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          PACKAGE: ${{ matrix.name }}@${{ matrix.version }}
+        run: |
+          if npm view "$PACKAGE" version >/dev/null 2>&1; then
+            echo "$PACKAGE is already published"
+          else
+            npm publish
+          fi
+      - name: Tag and release ${{ matrix.tag }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ matrix.tag }}
+          PREVIOUS: ${{ matrix.previousTag }}
+          SCHEMA: ${{ matrix.dir }}/${{ matrix.schema }}
+          TITLE: ${{ matrix.kind }} ${{ matrix.version }}
+        run: |
+          notes_from=()
+          [ -n "$PREVIOUS" ] && notes_from=(--notes-start-tag "$PREVIOUS")
+          gh release create "$TAG" "$SCHEMA" \
+            --target "$GITHUB_SHA" \
+            --title "$TITLE" \
+            --generate-notes "${notes_from[@]}" \
+            --latest=false
+
+  notify-cli:
+    needs: release
+    runs-on: ubuntu-latest
+    env:
+      CLI_DISPATCH_TOKEN: ${{ secrets.CLI_DISPATCH_TOKEN }}
+    steps:
+      - name: Tell omd-cli-poc about the new versions
+        if: env.CLI_DISPATCH_TOKEN != ''
+        env:
+          GH_TOKEN: ${{ secrets.CLI_DISPATCH_TOKEN }}
+        run: gh api repos/saturday-vibes/omd-cli-poc/dispatches -f event_type=schema-published
+      - name: No token yet
+        if: env.CLI_DISPATCH_TOKEN == ''
+        run: echo "CLI_DISPATCH_TOKEN is not set; omd-cli-poc picks the new versions up on its schedule."

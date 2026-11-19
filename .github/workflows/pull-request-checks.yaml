@@ -7,26 +7,67 @@ on:
   pull_request:
     types: [opened, reopened, edited, synchronize]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
 jobs:
   pull-request-title-check:
     name: PR Title Check
     runs-on: ubuntu-latest
-    if: github.event.pull_request.user.login != 'github-actions[bot]'
     steps:
       - uses: Slashgear/action-check-pr-title@76166c63ec0b25cdbe693e5e972e83ca186313fb # v6.0.0
         with:
           regexp: '^(feat|fix|chore|docs|ci|refactor|test|perf|build|style|revert)(\(.*\))?(!)?:'
           helpMessage: 'PR title must follow conventional commits: type(scope): description. Example: feat(CEA-12345): add new feature'
 
-  schema-check:
-    name: Schema Check
+  release-check:
+    name: Release Check
+    if: github.event.action != 'edited'
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
     steps:
       - uses: actions/checkout@v7
         with:
           fetch-depth: 0
           fetch-tags: true
-      - name: Schemas are valid JSON
-        run: jq empty component/OmdComponent.json service/OmdService.json
-      - name: Bundle builds from tags
-        run: scripts/build-bundle.sh dist 0.0.0-pr
+      - name: Get node version
+        id: nvm
+        run: echo "NODE_VERSION=$(cat .nvmrc)" >> "$GITHUB_OUTPUT"
+      - uses: actions/setup-node@v7
+        with:
+          node-version: ${{ steps.nvm.outputs.NODE_VERSION }}
+      - run: npm ci --ignore-scripts
+      - run: npm test
+      - name: Package contents
+        run: |
+          for dir in component service; do
+            (cd "$dir" && npm pack --dry-run)
+          done
+      - name: Check what this PR releases
+        id: check
+        env:
+          BASE_REF: ${{ github.base_ref }}
+        run: |
+          set +e
+          node scripts/check-release.mjs check --base "origin/$BASE_REF" --markdown release-check.md
+          echo "exit=$?" >> "$GITHUB_OUTPUT"
+          cat release-check.md >> "$GITHUB_STEP_SUMMARY"
+      - name: Comment on the PR
+        if: always() && steps.check.outputs.exit != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ github.event.pull_request.number }}
+        run: |
+          existing=$(gh api "repos/$GITHUB_REPOSITORY/issues/$PR/comments" --paginate \
+            -q '[.[] | select(.body | startswith("<!-- check-release -->"))][0].id // empty')
+          if [ -n "$existing" ]; then
+            gh api -X PATCH "repos/$GITHUB_REPOSITORY/issues/comments/$existing" -F body=@release-check.md >/dev/null
+          else
+            gh api "repos/$GITHUB_REPOSITORY/issues/$PR/comments" -F body=@release-check.md >/dev/null
+          fi
+      - name: Fail if the change can't be released
+        if: steps.check.outputs.exit != '0'
+        run: exit 1
