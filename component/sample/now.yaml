@@ -16,6 +16,7 @@ omd_component:
   sdm_owner_email: <email of WBD SDM/Director that owns the omd_component> # mandatory
   jira_team: <JIRA team name> # mandatory - the name of the team used in JIRA
   omd_tier: <tier> # mandatory - list of allowed values - undefined, not-applicable, tier-1, tier-2, tier-3, tier-4
+  cost_center: <cost center> # optional - finance cost center
   paths: # mandatory -  if omd_type is infra or database, paths.src is mandatory
     src:
       - component/src
@@ -33,7 +34,7 @@ jira_project:
   name: <Jira Project Name> # mandatory
   jira_board: <Link to Jira Board> # mandatory
 
-schema_version: v1.4.5 # mandatory
+schema_version: v1.5.0 # mandatory
 
 # Used for tracking the repository in WBD inventory. Do not remove or alter the content.
 inventory_id: 980162270ee0cf69c2e3a0a0a87dd93d-e8e885e0931c2c609d3059f840c02b70

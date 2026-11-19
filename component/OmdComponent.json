@@ -203,6 +203,11 @@
               "type": "array"
             }
           }
+        },
+        "cost_center": {
+          "type": "string",
+          "title": "Cost Center",
+          "description": "Finance cost center that pays for the component"
         }
       },
       "allOf": [
