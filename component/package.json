@@ -1,0 +1,20 @@
+{
+  "name": "@test-org-th/omd-schema-component",
+  "version": "1.4.5",
+  "description": "OMD JSON schema for component now.yaml files",
+  "main": "OmdComponent.json",
+  "files": [
+    "OmdComponent.json",
+    "sample/now.yaml"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/saturday-vibes/omd-schema-sandbox.git",
+    "directory": "component"
+  },
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  }
+}
