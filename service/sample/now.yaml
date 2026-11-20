@@ -6,6 +6,7 @@ omd_service:
   description: <description>
   origin: <owner>/<repo> #optional - example: wbd-streaming/service-catalog
   slack_channel: <#channel> #optional - example: #wbd-omd-help
+  runbook_url: <url> #optional - example: https://wiki.example.com/my-service/runbook
 
 schema_version: v1.3.0
 
