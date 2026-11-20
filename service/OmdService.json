@@ -51,6 +51,10 @@
           "title": "Runbook URL",
           "type": "string",
           "pattern": "^https://"
+        },
+        "oncall_rotation": {
+          "title": "On-call rotation",
+          "type": "string"
         }
       }
     }
