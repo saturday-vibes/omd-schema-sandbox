@@ -26,17 +26,18 @@ jobs:
         with:
           fetch-depth: 0
           fetch-tags: true
-      - name: Get node version
-        id: nvm
-        run: echo "NODE_VERSION=$(cat .nvmrc)" >> "$GITHUB_OUTPUT"
-      - uses: actions/setup-node@v7
-        with:
-          node-version: ${{ steps.nvm.outputs.NODE_VERSION }}
-      - run: npm ci --ignore-scripts
       - name: Kinds whose version has no tag yet
         id: pending
         run: |
-          kinds=$(node scripts/check-release.mjs pending)
+          kinds=$(for kind in component service; do
+            pkg="$kind/package.json"
+            version=$(jq -r .version "$pkg")
+            tag="$kind-v$version"
+            git rev-parse -q --verify "refs/tags/$tag" >/dev/null && continue
+            jq -c --arg kind "$kind" --arg tag "$tag" \
+              --arg previousTag "$(git tag -l "$kind-v*" --sort=-v:refname | head -1)" \
+              '{kind: $kind, dir: $kind, schema: .main, name, version, tag: $tag, previousTag: $previousTag}' "$pkg"
+          done | jq -sc .)
           echo "kinds=$kinds" >> "$GITHUB_OUTPUT"
           echo "Pending: $kinds"
 

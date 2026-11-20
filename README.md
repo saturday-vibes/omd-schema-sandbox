@@ -7,12 +7,16 @@ package per schema kind, one npm version per schema version.
 component/
   package.json          @test-org-th/omd-schema-component, version = schema version
   OmdComponent.json
-  sample/now.yaml       schema_version must match the version
+  sample/now.yaml       template for a component now.yaml
+  README.md             shown on the npm page
 service/
   package.json          @test-org-th/omd-schema-service
   OmdService.json
   sample/now.yaml
+  README.md
 ```
+
+There's no build step: each package publishes these files as they are.
 
 Consumers that need several versions side by side install them with aliases:
 
@@ -33,17 +37,18 @@ Service works the same way in `service/`. A PR can change both.
 
 ## What the release check enforces
 
-`scripts/check-release.mjs`, per kind, when a file the package ships (its
+`pull-request-checks.yaml`, per kind, when a file the package ships (its
 `files` or `package.json`) changed:
 
 - the version is plain `X.Y.Z` and higher than both `main` and the latest tag
-- the schema compiles (AJV, `strict: false`, ajv-errors)
+- the schema compiles (`ajv-cli`, `strict: false`, ajv-errors)
 
-A README change doesn't need a bump.
+A README change doesn't need a bump; it goes out with the next release. To
+check a schema locally:
 
 ```
 npm ci
-node scripts/check-release.mjs check --base origin/main    # what this branch releases
+npx ajv compile -s component/OmdComponent.json -c ajv-errors --all-errors --strict=false
 ```
 
 ## Diffs between versions
@@ -51,11 +56,6 @@ node scripts/check-release.mjs check --base origin/main    # what this branch re
 ```
 git diff component-v1.4.4 component-v1.4.5 -- component/OmdComponent.json
 ```
-
-## Backfill
-
-`backfill.yaml` (manual, dry run by default) publishes every existing tag that
-isn't on npm yet, from the files at that tag.
 
 ## Notifying consumers
 

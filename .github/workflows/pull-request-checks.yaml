@@ -45,15 +45,52 @@ jobs:
           for dir in component service; do
             (cd "$dir" && npm pack --dry-run)
           done
+      # When a file a package ships changed, its version must go above main and the
+      # latest tag, and its schema must compile.
       - name: Check what this PR releases
         id: check
         env:
-          BASE_REF: ${{ github.base_ref }}
+          BASE: origin/${{ github.base_ref }}
         run: |
-          set +e
-          node scripts/check-release.mjs check --base "origin/$BASE_REF" --markdown release-check.md
-          echo "exit=$?" >> "$GITHUB_OUTPUT"
+          failed=0
+          printf '<!-- check-release -->\n### Schema release check\n\n' > release-check.md
+          for kind in component service; do
+            pkg="$kind/package.json"
+            name=$(jq -r .name "$pkg")
+            version=$(jq -r .version "$pkg")
+            schema="$kind/$(jq -r .main "$pkg")"
+            shipped=()
+            while IFS= read -r file; do shipped+=("$kind/$file"); done < <(jq -r '.files[]' "$pkg")
+
+            if git diff --quiet "$BASE" -- "$pkg" "${shipped[@]}"; then
+              printf '**%s**: no change\n\n' "$kind" >> release-check.md
+              continue
+            fi
+
+            errors=()
+            previous=$( { git show "$BASE:$pkg" 2>/dev/null | jq -r .version; git tag -l "$kind-v*" | sed "s/^$kind-v//"; } \
+              | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' | sort -V | tail -1)
+            if [[ ! "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+              errors+=("version $version must be plain X.Y.Z")
+            elif [[ -n "$previous" && ( "$version" == "$previous" || $(printf '%s\n%s\n' "$previous" "$version" | sort -V | tail -1) != "$version" ) ]]; then
+              errors+=("files changed: bump the version in $pkg above $previous")
+            fi
+            if ! output=$(npx --no-install ajv compile -s "$schema" -c ajv-errors --all-errors --strict=false 2>&1); then
+              errors+=("$schema does not compile: $(tail -1 <<< "$output")")
+            fi
+
+            if [ ${#errors[@]} -eq 0 ]; then
+              printf '**%s** %s → %s: on merge, publish `%s@%s` and tag `%s-v%s`\n\n' "$kind" "$previous" "$version" "$name" "$version" "$kind" "$version" >> release-check.md
+            else
+              failed=1
+              printf '**%s** %s → %s: **FAIL**\n' "$kind" "$previous" "$version" >> release-check.md
+              printf -- '- %s\n' "${errors[@]}" >> release-check.md
+              printf '\n' >> release-check.md
+            fi
+          done
+          cat release-check.md
           cat release-check.md >> "$GITHUB_STEP_SUMMARY"
+          echo "exit=$failed" >> "$GITHUB_OUTPUT"
       - name: Comment on the PR
         if: always() && steps.check.outputs.exit != ''
         env:

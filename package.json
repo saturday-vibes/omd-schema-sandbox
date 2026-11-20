@@ -1,13 +1,9 @@
 {
   "name": "omd-schema-tooling",
   "private": true,
-  "description": "Release checks for the schema packages in component/ and service/",
-  "type": "module",
-  "scripts": {
-    "check": "node scripts/check-release.mjs check --base origin/main"
-  },
+  "description": "Pins the tools the workflows use to check the schema packages in component/ and service/",
   "devDependencies": {
-    "ajv": "^8.17.1",
+    "ajv-cli": "^5.0.0",
     "ajv-errors": "^3.0.0"
   }
 }
