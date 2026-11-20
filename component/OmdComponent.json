@@ -203,6 +203,12 @@
               "type": "array"
             }
           }
+        },
+        "dashboard_url": {
+          "title": "Dashboard URL",
+          "description": "Link to the component's main observability dashboard.",
+          "type": "string",
+          "pattern": "^https://"
         }
       },
       "allOf": [
