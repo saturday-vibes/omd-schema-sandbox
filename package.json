@@ -4,12 +4,10 @@
   "description": "Release checks for the schema packages in component/ and service/",
   "type": "module",
   "scripts": {
-    "test": "node --test 'scripts/**/*.test.mjs'",
     "check": "node scripts/check-release.mjs check --base origin/main"
   },
   "devDependencies": {
     "ajv": "^8.17.1",
-    "ajv-errors": "^3.0.0",
-    "js-yaml": "^4.1.0"
+    "ajv-errors": "^3.0.0"
   }
 }
