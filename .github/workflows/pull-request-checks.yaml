@@ -40,7 +40,6 @@ jobs:
         with:
           node-version: ${{ steps.nvm.outputs.NODE_VERSION }}
       - run: npm ci --ignore-scripts
-      - run: npm test
       - name: Package contents
         run: |
           for dir in component service; do

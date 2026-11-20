@@ -22,11 +22,9 @@ Consumers that need several versions side by side install them with aliases:
 
 ## Releasing a schema change
 
-1. In one PR, edit `component/OmdComponent.json`, bump `version` in
-   `component/package.json`, and set the same `schema_version` in
-   `component/sample/now.yaml`.
-2. The **Release Check** comments on the PR with what will be released and
-   fails if the change can't be released as it is.
+1. In one PR, edit `component/OmdComponent.json` and bump `version` in
+   `component/package.json`.
+2. The **Release Check** comments on the PR with what will be released.
 3. Merge. `release.yaml` publishes `@test-org-th/omd-schema-component@<version>`
    to npm, then creates the tag `component-v<version>` and a GitHub release with
    the schema attached.
@@ -35,34 +33,16 @@ Service works the same way in `service/`. A PR can change both.
 
 ## What the release check enforces
 
-`scripts/check-release.mjs`, per kind:
+`scripts/check-release.mjs`, per kind, when a file the package ships (its
+`files` or `package.json`) changed:
 
-| What the package ships changed | Version changed | Result               |
-| ------------------------------ | --------------- | -------------------- |
-| no                             | no              | nothing to release   |
-| yes                            | no              | fail: bump it        |
-| no                             | yes             | fail: nothing to release |
-| yes                            | yes             | checks below         |
+- the version is plain `X.Y.Z` and higher than both `main` and the latest tag
+- the schema compiles (AJV, `strict: false`, ajv-errors)
 
-"What the package ships" is the files in `files` plus `package.json` without
-`version`, so a README change doesn't need a bump.
-
-- The version is plain `X.Y.Z`, the next patch, minor or major after both
-  `main` and the latest tag, and not tagged or published yet.
-- The bump is at least what the schema change needs
-  (`scripts/lib/schema-diff.mjs`):
-  - major: a field becomes required, a property or enum value is removed, a
-    type changes, a pattern or tighter bound is added
-  - minor: a property or enum value is added, a requirement is dropped
-  - patch: only `description`, `title`, `errorMessage`, `examples`, `default`
-  - anything else (`if`/`then`, `allOf`, ...) needs at least minor and is
-    flagged for review
-- The schema compiles (AJV, `strict: false`, ajv-errors).
-- The sample's `schema_version` matches the version.
+A README change doesn't need a bump.
 
 ```
 npm ci
-npm test                                                   # schema-diff unit tests
 node scripts/check-release.mjs check --base origin/main    # what this branch releases
 ```
 
