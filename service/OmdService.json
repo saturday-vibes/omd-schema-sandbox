@@ -46,6 +46,11 @@
           "title": "Slack channel",
           "type": "string",
           "pattern": "^#[a-z0-9_-]+$"
+        },
+        "runbook_url": {
+          "title": "Runbook URL",
+          "type": "string",
+          "pattern": "^https://"
         }
       }
     }

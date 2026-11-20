@@ -1,6 +1,6 @@
 {
   "name": "@test-org-th/omd-schema-service",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "description": "OMD JSON schema for service now.yaml files",
   "main": "OmdService.json",
   "files": [
