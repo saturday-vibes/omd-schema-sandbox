@@ -55,6 +55,11 @@
         "oncall_rotation": {
           "title": "On-call rotation",
           "type": "string"
+        },
+        "cost_center": {
+          "title": "Cost center",
+          "type": "string",
+          "pattern": "^CC-[0-9]{4,6}$"
         }
       }
     }
