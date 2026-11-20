@@ -1,6 +1,6 @@
 {
   "name": "@test-org-th/omd-schema-component",
-  "version": "1.4.5",
+  "version": "1.5.0",
   "description": "OMD JSON schema for component now.yaml files",
   "main": "OmdComponent.json",
   "files": [

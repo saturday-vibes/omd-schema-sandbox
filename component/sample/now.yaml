@@ -28,12 +28,13 @@ omd_component:
       omd_component: <component1>
     - omd_service: <service2>
       omd_component: <component2>
+  dashboard_url: <url> # optional - example: https://grafana.example.com/d/my-component
 
 jira_project:
   name: <Jira Project Name> # mandatory
   jira_board: <Link to Jira Board> # mandatory
 
-schema_version: v1.4.5 # mandatory
+schema_version: v1.5.0 # mandatory
 
 # Used for tracking the repository in WBD inventory. Do not remove or alter the content.
 inventory_id: 980162270ee0cf69c2e3a0a0a87dd93d-e8e885e0931c2c609d3059f840c02b70
