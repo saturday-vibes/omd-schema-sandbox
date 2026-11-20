@@ -35,7 +35,7 @@
           "pattern": "^[a-z][a-z0-9_-]{0,61}[a-z0-9]$"
         },
         "description": {
-          "title": "Service description",
+          "title": "Short service description",
           "type": "string"
         },
         "origin": {
